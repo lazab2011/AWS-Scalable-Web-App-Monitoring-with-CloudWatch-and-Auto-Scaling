@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Update system packages
+dnf update -y
+
+# Install Apache (httpd)
+dnf install -y httpd
+
+# Start and enable Apache
+systemctl start httpd
+systemctl enable httpd
+
+# Get metadata token
+TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" \
+  -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+
+# Get instance metadata
+PRIVATE_IP=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" \
+  -s http://169.254.169.254/latest/meta-data/local-ipv4)
+
+PUBLIC_IP=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" \
+  -s http://169.254.169.254/latest/meta-data/public-ipv4)
+
+AZ=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" \
+  -s http://169.254.169.254/latest/meta-data/placement/availability-zone)
+
+# Create a simple webpage
+cat > /var/www/html/index.html <<EOF
+<html>
+<head><title>EC2 Instance Info</title></head>
+<body>
+<h2>Amazon Linux 2023 Web Server</h2>
+<p><strong>Private IP:</strong> $PRIVATE_IP</p>
+<p><strong>Public IP:</strong> $PUBLIC_IP</p>
+<p><strong>Availability Zone:</strong> $AZ</p>
+</body>
+</html>
+EOF
