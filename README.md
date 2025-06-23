@@ -19,7 +19,7 @@ It simulates real-world infrastructure observability, using EC2, ALB, and CloudW
 - **IAM Roles** with least privilege
 - **Security Group** for Bastion Host, ALB and ASG
 
-![Architecture Diagram](..\images\CloudWatchProject.jpg)
+![Architecture Diagram](images/CloudWatchProject.jpg)
 
 
 ## Features
